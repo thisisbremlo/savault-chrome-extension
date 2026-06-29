@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "savault",
+  "version": "1.0.0",
+  "description": "Browse saved websites directly in the savault browser extension.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": [
+    "https://savault.framer.website/*",
+    "https://*.workers.dev/*",
+    "http://127.0.0.1:8787/*",
+    "http://localhost:8787/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://savault.framer.website/*"],
+      "js": ["content/saved-sync.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Open savault",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["archive/*", "lib/*", "icons/*", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,37 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build output
+*.zip
+
+# Extension packaging artifacts
+web-ext-artifacts/
+
+# Secrets & local overrides
+# NEVER commit credentials or config files containing real endpoints/keys
+.env
+.env.*
+!.env.example
+secrets.json
+config.local.json
+
+# Notion credentials (deprecated; secrets live on Cloudflare Worker)
+**/notion-token*
+lib/notion-credentials.js
+
+# API endpoint config (contains your real Worker URL)
+lib/api-config.js
+
+# Worker development
+worker/.dev.vars
+worker/node_modules/
+worker/.wrangler/
+
+# IDE & editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

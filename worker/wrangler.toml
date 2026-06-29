@@ -1,0 +1,12 @@
+name = "savault-archive-api"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+
+# Secrets (set via `wrangler secret put`):
+#   NOTION_TOKEN
+#   NOTION_DATABASE_ID
+# Optional:
+#   SAVAULT_API_KEY - if set, extension must send X-Savault-Key header
+
+[observability]
+enabled = true
