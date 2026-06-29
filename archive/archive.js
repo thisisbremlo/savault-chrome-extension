@@ -50,6 +50,7 @@ const newFilterEl = document.getElementById("new-filter");
 const bookmarksFilterEl = document.getElementById("bookmarks-filter");
 const viewSavedBtn = document.getElementById("view-saved-btn");
 const savedFindsBtn = document.getElementById("saved-finds-btn");
+const personalVaultBtn = document.getElementById("personal-vault-btn");
 const clearCategoryBtn = document.getElementById("clear-category-btn");
 const categoryTileEls = [...document.querySelectorAll(".vault-tile")];
 const savedResultsEl = document.getElementById("saved-results");
@@ -641,6 +642,9 @@ if (bookmarksFilterEl) {
 }
 viewSavedBtn?.addEventListener("click", () => openArchive({ category: "All" }));
 savedFindsBtn?.addEventListener("click", () =>
+  openArchive({ category: "All", savedOnly: true })
+);
+personalVaultBtn?.addEventListener("click", () =>
   openArchive({ category: "All", savedOnly: true })
 );
 clearCategoryBtn?.addEventListener("click", () => {

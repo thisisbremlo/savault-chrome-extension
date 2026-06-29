@@ -235,10 +235,12 @@ html.embed .app {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 16px;
   min-width: 0;
 }
 
 .header-nav a,
+.header-vault-btn,
 .text-cta {
   padding: 0;
   color: var(--ink);
@@ -261,6 +263,7 @@ html.embed .app {
 }
 
 .header-nav a:hover,
+.header-vault-btn:hover,
 .text-cta:hover {
   color: #ffffff;
 }
