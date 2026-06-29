@@ -447,12 +447,18 @@ function renderCard(item) {
   const builder = normalizeText(item?.builder);
   const stack = normalizeText(item?.techStack);
   const kicker = [item.category, item.subcategory].filter(Boolean).join(" / ");
-  const coverBlock = item.coverImage
+  const coverSrc = normalizeText(item?.coverImage) || normalizeText(item?.fullpageImage);
+  const fallbackCoverSrc =
+    normalizeText(item?.coverImage) && normalizeText(item?.fullpageImage)
+      ? normalizeText(item.fullpageImage)
+      : "";
+  const coverBlock = coverSrc
     ? `
         <div class="cover-skeleton" aria-hidden="true"></div>
         <img
           class="cover cover-img is-loading"
-          src="${escapeHtml(item.coverImage)}"
+          src="${escapeHtml(coverSrc)}"
+          ${fallbackCoverSrc ? `data-fallback-src="${escapeHtml(fallbackCoverSrc)}"` : ""}
           alt=""
           loading="eager"
           fetchpriority="high"
@@ -510,9 +516,21 @@ function bindMediaLoad(root) {
         const skeleton = img.closest(".cover-wrap")?.querySelector(".cover-skeleton");
         if (skeleton) skeleton.classList.add("is-hidden");
       } else {
-        img.classList.add("is-error");
         const wrap = img.closest(".cover-wrap");
         if (wrap && img.classList.contains("cover-img")) {
+          const fallbackSrc = img.dataset.fallbackSrc;
+          if (fallbackSrc && img.src !== fallbackSrc) {
+            img.dataset.fallbackSrc = "";
+            img.addEventListener("load", () => onDone(true), { once: true });
+            img.addEventListener("error", () => onDone(false), { once: true });
+            img.src = fallbackSrc;
+            fallbackTimer = setTimeout(() => {
+              if (!img.classList.contains("is-loaded")) onDone(false);
+            }, 4500);
+            return;
+          }
+
+          img.classList.add("is-error");
           img.remove();
           if (!wrap.querySelector(".cover-fallback")) {
             wrap.insertAdjacentHTML(
