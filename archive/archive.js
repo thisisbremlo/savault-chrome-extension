@@ -468,8 +468,12 @@ function renderCard(item) {
     : `<div class="cover-fallback" aria-hidden="true"></div>`;
 
   const flags = [
-    isItemNew(item) ? '<span class="flag flag-new">New</span>' : "",
     item.isSponsored ? '<span class="flag flag-sponsored">Sponsored</span>' : "",
+  ]
+    .filter(Boolean)
+    .join("");
+  const titleBadges = [
+    isItemNew(item) ? '<span class="title-badge">NEW</span>' : "",
   ]
     .filter(Boolean)
     .join("");
@@ -492,6 +496,7 @@ function renderCard(item) {
           <div class="card-title-row">
             <img class="favicon is-loading" src="${escapeHtml(item.favicon)}" alt="" width="22" height="22" loading="lazy" decoding="async" />
             <h2>${escapeHtml(item.title)}</h2>
+            ${titleBadges}
             ${pricing ? `<span class="price-pill">${escapeHtml(pricing)}</span>` : ""}
           </div>
           ${item.description ? `<p class="description">${escapeHtml(item.description)}</p>` : ""}

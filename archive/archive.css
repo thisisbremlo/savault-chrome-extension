@@ -850,6 +850,11 @@ html.embed .main-scroll {
     transform 0.18s ease;
 }
 
+.grid.view-grid .card {
+  min-height: 230px;
+  background: #1f1f20;
+}
+
 .card:hover {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.006)),
@@ -867,6 +872,12 @@ html.embed .main-scroll {
   text-decoration: none;
 }
 
+.grid.view-grid .card-link {
+  position: relative;
+  height: 100%;
+  min-height: 230px;
+}
+
 .cover-wrap {
   position: relative;
   aspect-ratio: 1.22 / 1;
@@ -878,6 +889,12 @@ html.embed .main-scroll {
   contain: layout paint;
 }
 
+.grid.view-grid .cover-wrap {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+
 .cover-wrap::after {
   content: "";
   position: absolute;
@@ -886,6 +903,11 @@ html.embed .main-scroll {
   height: 46%;
   background: linear-gradient(to top, rgba(31, 31, 33, 0.5), transparent);
   pointer-events: none;
+}
+
+.grid.view-grid .cover-wrap::after {
+  height: 50%;
+  background: linear-gradient(to top, rgba(31, 31, 33, 0.68), transparent);
 }
 
 .cover-skeleton {
@@ -1006,6 +1028,17 @@ html.embed .main-scroll {
   transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
+.grid.view-grid .bookmark-btn {
+  top: auto;
+  right: 10px;
+  bottom: 19px;
+  width: 18px;
+  height: 22px;
+  color: rgba(237, 237, 237, 0.9);
+  background: transparent;
+  border: 0;
+}
+
 .card:hover .bookmark-btn,
 .bookmark-btn.is-active,
 .grid.view-list .bookmark-btn {
@@ -1018,6 +1051,12 @@ html.embed .main-scroll {
   background: var(--paper);
 }
 
+.grid.view-grid .bookmark-btn:hover,
+.grid.view-grid .bookmark-btn.is-active {
+  color: #ffffff;
+  background: transparent;
+}
+
 .card-body {
   display: flex;
   flex-direction: column;
@@ -1028,12 +1067,30 @@ html.embed .main-scroll {
   flex: 1;
 }
 
+.grid.view-grid .card-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 44px 0 10px;
+  background: rgba(31, 31, 33, 0.88);
+}
+
 .card-title-row {
   display: flex;
   align-items: center;
   gap: 7px;
   min-width: 0;
   margin: 8px 0 7px;
+}
+
+.grid.view-grid .card-title-row {
+  margin: 0;
+  gap: 8px;
 }
 
 .card-kicker {
@@ -1056,6 +1113,11 @@ html.embed .main-scroll {
   transition: opacity 0.22s ease;
 }
 
+.grid.view-grid .favicon {
+  width: 22px;
+  height: 22px;
+}
+
 .favicon.is-loaded {
   opacity: 1;
 }
@@ -1076,6 +1138,26 @@ html.embed .main-scroll {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.grid.view-grid .card h2 {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.title-badge {
+  flex-shrink: 0;
+  color: #7b7b7b;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.grid.view-grid .card-kicker,
+.grid.view-grid .description,
+.grid.view-grid .meta,
+.grid.view-grid .price-pill {
+  display: none;
 }
 
 .price-pill {
