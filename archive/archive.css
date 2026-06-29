@@ -1018,8 +1018,9 @@ html.embed .main-scroll {
 .card-body {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 10px 11px 12px;
+  justify-content: flex-end;
+  gap: 0;
+  padding: 12px 11px 13px;
   min-width: 0;
   flex: 1;
 }
@@ -1029,6 +1030,7 @@ html.embed .main-scroll {
   align-items: center;
   gap: 7px;
   min-width: 0;
+  margin: 8px 0 7px;
 }
 
 .card-kicker {
@@ -1105,8 +1107,8 @@ html.embed .main-scroll {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin-top: auto;
-  padding-top: 2px;
+  margin-top: 9px;
+  padding-top: 0;
 }
 
 .tag,
