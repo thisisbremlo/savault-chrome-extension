@@ -851,7 +851,7 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .card {
-  min-height: 230px;
+  min-height: 302px;
   background: #1f1f20;
 }
 
@@ -873,9 +873,9 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .card-link {
-  position: relative;
-  height: 100%;
-  min-height: 230px;
+  position: static;
+  height: auto;
+  min-height: 0;
 }
 
 .cover-wrap {
@@ -890,9 +890,9 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .cover-wrap {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: auto;
+  position: relative;
+  inset: auto;
+  aspect-ratio: 1.22 / 1;
 }
 
 .cover-wrap::after {
@@ -906,8 +906,8 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .cover-wrap::after {
-  height: 50%;
-  background: linear-gradient(to top, rgba(31, 31, 33, 0.68), transparent);
+  height: 46%;
+  background: linear-gradient(to top, rgba(31, 31, 33, 0.5), transparent);
 }
 
 .cover-skeleton {
@@ -1029,14 +1029,14 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .bookmark-btn {
-  top: auto;
-  right: 10px;
-  bottom: 19px;
-  width: 18px;
-  height: 22px;
-  color: rgba(237, 237, 237, 0.9);
-  background: transparent;
-  border: 0;
+  top: 8px;
+  right: 8px;
+  bottom: auto;
+  width: 30px;
+  height: 34px;
+  color: rgba(237, 237, 237, 0.86);
+  background: rgba(31, 31, 33, 0.82);
+  border: 1px solid rgba(237, 237, 237, 0.12);
 }
 
 .card:hover .bookmark-btn,
@@ -1053,8 +1053,8 @@ html.embed .main-scroll {
 
 .grid.view-grid .bookmark-btn:hover,
 .grid.view-grid .bookmark-btn.is-active {
-  color: #ffffff;
-  background: transparent;
+  color: var(--paper-ink);
+  background: var(--paper);
 }
 
 .card-body {
@@ -1068,16 +1068,17 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .card-body {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 4;
+  position: static;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
   display: flex;
-  justify-content: center;
-  min-height: 54px;
-  padding: 0 44px 0 10px;
-  background: rgba(31, 31, 33, 0.88);
+  justify-content: flex-end;
+  min-height: 111px;
+  padding: 12px 11px 13px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .card-title-row {
@@ -1089,8 +1090,8 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .card-title-row {
-  margin: 0;
-  gap: 8px;
+  margin: 7px 0 7px;
+  gap: 7px;
 }
 
 .card-kicker {
@@ -1114,8 +1115,8 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .favicon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .favicon.is-loaded {
@@ -1141,8 +1142,8 @@ html.embed .main-scroll {
 }
 
 .grid.view-grid .card h2 {
-  font-size: 20px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 1.04;
 }
 
 .title-badge {
@@ -1151,13 +1152,6 @@ html.embed .main-scroll {
   font-size: 11px;
   font-weight: 500;
   line-height: 1;
-}
-
-.grid.view-grid .card-kicker,
-.grid.view-grid .description,
-.grid.view-grid .meta,
-.grid.view-grid .price-pill {
-  display: none;
 }
 
 .price-pill {
