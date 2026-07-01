@@ -4,6 +4,8 @@
 
   const STORAGE_KEY = "savault_saved_websites";
   const STORAGE_EVENT = "savault_saved_websites_changed";
+  const OLD_CLIENT_ID_KEY = "loopa_client_id";
+  const CLIENT_ID_KEY = "savault_client_id";
   const SLUG_FIELDS = ["slug", "id", "cmsSlug", "framerCMSSlug"];
 
   let isWritingPageStorage = false;
@@ -19,6 +21,26 @@
 
   function normalizeSlug(slug) {
     return typeof slug === "string" ? slug.trim() : "";
+  }
+
+  function createClientId() {
+    try {
+      return (
+        window.crypto?.randomUUID?.() ??
+        Math.random().toString(36).slice(2) + Date.now().toString(36)
+      );
+    } catch {
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+  }
+
+  function readPageClientId() {
+    let id = localStorage.getItem(CLIENT_ID_KEY);
+    if (!id) {
+      id = localStorage.getItem(OLD_CLIENT_ID_KEY) || createClientId();
+      localStorage.setItem(CLIENT_ID_KEY, id);
+    }
+    return id;
   }
 
   function readObjectSlug(value) {
@@ -135,6 +157,11 @@
     if (message?.type === "savault:get-saved-slugs") {
       const slugs = readPageSavedSlugs();
       sendResponse({ ok: slugs !== null, slugs: slugs ?? [] });
+      return false;
+    }
+
+    if (message?.type === "savault:get-client-id") {
+      sendResponse({ ok: true, clientId: readPageClientId() });
       return false;
     }
 

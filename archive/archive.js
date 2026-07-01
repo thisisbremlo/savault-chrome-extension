@@ -51,6 +51,7 @@ const bookmarksFilterEl = document.getElementById("bookmarks-filter");
 const viewSavedBtn = document.getElementById("view-saved-btn");
 const savedFindsBtn = document.getElementById("saved-finds-btn");
 const personalVaultBtn = document.getElementById("personal-vault-btn");
+const shareVaultBtn = document.getElementById("share-vault-btn");
 const clearCategoryBtn = document.getElementById("clear-category-btn");
 const categoryTileEls = [...document.querySelectorAll(".vault-tile")];
 const savedResultsEl = document.getElementById("saved-results");
@@ -77,6 +78,18 @@ if (supportIconEl) {
   supportIconEl.innerHTML = iconifyIcon("heartSolid", 16);
 }
 
+if (shareVaultBtn) {
+  shareVaultBtn.onclick = () => openArchive({ category: "All" });
+}
+
+// Default header CTA: 'My vault' (opens personal vault from main menu)
+if (personalVaultBtn) {
+  personalVaultBtn.textContent = "My vault";
+  personalVaultBtn.classList.remove("primary-cta");
+  personalVaultBtn.classList.add("open-link");
+  personalVaultBtn.onclick = () => openPersonalVault();
+}
+
 let allItems = [];
 let activeCategory = "All";
 let activePricing = "All";
@@ -84,6 +97,11 @@ let viewMode = VIEW_GRID;
 let savedSlugs = new Set();
 let archiveLoaded = false;
 let archiveLoadPromise = null;
+let isPersonalVault = false;
+let savedEmptyMode = false;
+
+const SHARE_BASE_URL = "https://savault.framer.website/saved";
+const CLIENT_ID_KEY = "savault_client_id";
 
 const ARCHIVE_HERO = {
   title: "Explore the Savault archive.",
@@ -95,6 +113,12 @@ const SAVED_EMPTY_HERO = {
   title: "Your vault is still empty.",
   subtitle:
     "Start saving websites, tools, and resources from the Savault archive. Your favorites will appear here.",
+};
+
+const PERSONAL_VAULT_HERO = {
+  title: "Your personal Savault.",
+  subtitle:
+    "Everything you saved, kept in one place - ready to revisit, reuse, or share whenever inspiration is needed.",
 };
 
 const NON_PRICING_VALUES = new Set([
@@ -147,6 +171,95 @@ function escapeHtml(value) {
 
 function normalizeText(value) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function createClientId() {
+  try {
+    return (
+      crypto?.randomUUID?.() ??
+      Math.random().toString(36).slice(2) + Date.now().toString(36)
+    );
+  } catch {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+}
+
+function getClientId() {
+  try {
+    let id = localStorage.getItem(CLIENT_ID_KEY);
+    if (!id) {
+      id = createClientId();
+      localStorage.setItem(CLIENT_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return createClientId();
+  }
+}
+
+function showToast(message) {
+  const oldToast = document.querySelector(".toast");
+  if (oldToast) oldToast.remove();
+
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => toast.classList.add("is-visible"));
+
+  window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+    window.setTimeout(() => toast.remove(), 240);
+  }, 1800);
+}
+
+async function copyText(value) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(value);
+      return;
+    } catch {
+      // Fallback to legacy copy behavior if writeText is unavailable or blocked.
+    }
+  }
+
+  const input = document.createElement("textarea");
+  input.value = value;
+  input.setAttribute("readonly", "");
+  input.style.position = "fixed";
+  input.style.opacity = "0";
+  document.body.appendChild(input);
+  input.select();
+
+  const copied = document.execCommand("copy");
+  input.remove();
+
+  if (!copied) {
+    throw new Error("copy failed");
+  }
+}
+
+async function sharePersonalVault() {
+  const slugs = Array.from(savedSlugs).map(normalizeSlug).filter(Boolean);
+
+  if (!slugs.length) {
+    showToast("No saved finds yet");
+    return;
+  }
+
+  const clientId = (await getActiveSavaultClientId()) || getClientId();
+  const params = new URLSearchParams({
+    sites: slugs.join(","),
+    sharedBy: clientId,
+  });
+
+  try {
+    await copyText(`${SHARE_BASE_URL}?${params.toString()}`);
+    showToast("Vault link copied");
+  } catch {
+    showToast("Copy failed");
+  }
 }
 
 function getItemPricing(item) {
@@ -273,6 +386,17 @@ async function getActiveSavaultSavedSlugs() {
   }
 }
 
+async function getActiveSavaultClientId() {
+  try {
+    const response = await api.runtime.sendMessage({
+      type: "savault:read-client-id",
+    });
+    return response?.ok && response.clientId ? response.clientId : null;
+  } catch {
+    return null;
+  }
+}
+
 function applyViewMode(mode) {
   viewMode = mode;
   gridEl.classList.remove("view-grid", "view-list");
@@ -378,23 +502,87 @@ function updateCategoryTiles() {
 }
 
 function showResults() {
+  isPersonalVault = false;
+  savedEmptyMode = false;
   const appEl = document.querySelector(".app");
   appEl?.classList.add("has-results");
-  appEl?.classList.remove("has-saved-empty");
+  appEl?.classList.remove("has-saved-empty", "has-personal-vault");
   if (heroTitleEl) heroTitleEl.textContent = ARCHIVE_HERO.title;
   if (heroSubtitleEl) heroSubtitleEl.textContent = ARCHIVE_HERO.subtitle;
   if (viewSavedBtn) viewSavedBtn.textContent = "Browse all";
+  if (viewSavedBtn) viewSavedBtn.hidden = false;
+  if (shareVaultBtn) {
+    shareVaultBtn.hidden = false;
+    shareVaultBtn.onclick = () => openArchive({ category: "All" });
+  }
+  savedFindsBtn?.removeAttribute("hidden");
   if (appEl) appEl.scrollTop = 0;
+  updateVaultCTAs();
 }
 
 function showSavedEmpty() {
+  isPersonalVault = true;
+  savedEmptyMode = true;
   const appEl = document.querySelector(".app");
+  appEl?.classList.add("has-saved-empty", "has-personal-vault");
   appEl?.classList.remove("has-results");
-  appEl?.classList.add("has-saved-empty");
   if (heroTitleEl) heroTitleEl.textContent = SAVED_EMPTY_HERO.title;
   if (heroSubtitleEl) heroSubtitleEl.textContent = SAVED_EMPTY_HERO.subtitle;
-  if (viewSavedBtn) viewSavedBtn.textContent = "Explore Savault";
+  if (viewSavedBtn) viewSavedBtn.hidden = true;
+  if (shareVaultBtn) shareVaultBtn.hidden = false;
+  savedFindsBtn?.setAttribute("hidden", "");
   if (appEl) appEl.scrollTop = 0;
+  updateVaultCTAs();
+}
+
+function showPersonalVault() {
+  isPersonalVault = true;
+  savedEmptyMode = false;
+  const appEl = document.querySelector(".app");
+  appEl?.classList.add("has-results", "has-personal-vault");
+  appEl?.classList.remove("has-saved-empty");
+  if (heroTitleEl) heroTitleEl.textContent = PERSONAL_VAULT_HERO.title;
+  if (heroSubtitleEl) heroSubtitleEl.textContent = PERSONAL_VAULT_HERO.subtitle;
+  if (viewSavedBtn) viewSavedBtn.hidden = true;
+  if (shareVaultBtn) shareVaultBtn.hidden = false;
+  savedFindsBtn?.setAttribute("hidden", "");
+  if (appEl) appEl.scrollTop = 0;
+  updateVaultCTAs();
+}
+
+function updateVaultCTAs() {
+  const hasSaved = Boolean(savedSlugs && savedSlugs.size > 0);
+
+  if (shareVaultBtn) {
+    shareVaultBtn.hidden = false;
+    shareVaultBtn.classList.add("primary-cta");
+    if (savedEmptyMode || !isPersonalVault) {
+      shareVaultBtn.textContent = "Browse all";
+      shareVaultBtn.onclick = () => openArchive({ category: "All" });
+    } else if (isPersonalVault) {
+      shareVaultBtn.textContent = hasSaved ? "Share your vault" : "Browse all";
+      shareVaultBtn.onclick = hasSaved ? sharePersonalVault : () => openArchive({ category: "All" });
+    }
+  }
+
+  if (personalVaultBtn) {
+    if (savedEmptyMode) {
+      personalVaultBtn.textContent = "Open Savault";
+      personalVaultBtn.classList.add("primary-cta");
+      personalVaultBtn.classList.remove("open-link");
+      personalVaultBtn.onclick = () => openArchive({ category: "All" });
+    } else if (isPersonalVault) {
+      personalVaultBtn.textContent = "Browse all";
+      personalVaultBtn.classList.add("primary-cta");
+      personalVaultBtn.classList.remove("open-link");
+      personalVaultBtn.onclick = () => openArchive({ category: "All" });
+    } else {
+      personalVaultBtn.textContent = "My vault";
+      personalVaultBtn.classList.remove("primary-cta");
+      personalVaultBtn.classList.add("open-link");
+      personalVaultBtn.onclick = () => openPersonalVault();
+    }
+  }
 }
 
 function setBookmarkFilter(checked) {
@@ -436,6 +624,19 @@ async function openArchive({ category = "All", savedOnly = false } = {}) {
   setBookmarkFilter(savedOnly);
   updateCategoryTiles();
   showResults();
+  await ensureArchiveLoaded();
+  renderItems(filterItems());
+}
+
+async function openPersonalVault() {
+  activeCategory = "All";
+  activePricing = "All";
+  if (pricingEl) pricingEl.value = "All";
+  if (searchEl) searchEl.value = "";
+  if (newFilterEl) newFilterEl.checked = false;
+  setBookmarkFilter(true);
+  updateCategoryTiles();
+  showPersonalVault();
   await ensureArchiveLoaded();
   renderItems(filterItems());
 }
@@ -568,9 +769,20 @@ function bindMediaLoad(root) {
 
 function renderItems(items) {
   if (!items.length) {
-    if (bookmarksFilterEl?.checked) {
+    if (savedSlugs.size === 0 && (isPersonalVault || bookmarksFilterEl?.checked)) {
       gridEl.innerHTML = "";
       showSavedEmpty();
+      return;
+    }
+
+    if (isPersonalVault) {
+      gridEl.innerHTML = `<p class="empty personal-empty">Your vault is still empty.</p>`;
+      statusEl.hidden = true;
+      return;
+    }
+
+    if (bookmarksFilterEl?.checked) {
+      gridEl.innerHTML = `<p class="empty">No saved finds match your search.</p>`;
       return;
     }
 
@@ -609,6 +821,7 @@ async function loadArchive() {
       : extensionSlugs;
     allItems = items;
     savedSlugs = new Set(bookmarks);
+    updateVaultCTAs();
     archiveLoaded = true;
     hideStatus();
     activePricing = "All";
@@ -645,13 +858,10 @@ if (bookmarksFilterEl) {
     renderItems(filterItems());
   });
 }
-viewSavedBtn?.addEventListener("click", () => openArchive({ category: "All" }));
-savedFindsBtn?.addEventListener("click", () =>
-  openArchive({ category: "All", savedOnly: true })
-);
-personalVaultBtn?.addEventListener("click", () =>
-  openArchive({ category: "All", savedOnly: true })
-);
+if (viewSavedBtn) viewSavedBtn.onclick = () => openArchive({ category: "All" });
+if (savedFindsBtn) savedFindsBtn.onclick = openPersonalVault;
+if (personalVaultBtn) personalVaultBtn.onclick = openPersonalVault;
+if (shareVaultBtn) shareVaultBtn.onclick = () => openArchive({ category: "All" });
 clearCategoryBtn?.addEventListener("click", () => {
   setBookmarkFilter(false);
   activeCategory = "All";

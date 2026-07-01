@@ -43,7 +43,7 @@
           Savault collects inspiring websites, tools, and resources so your best references don't get lost in tabs.
         </p>
         <div class="hero-actions">
-          <button type="button" id="view-saved-btn" class="primary-cta">Browse all</button>
+          <button type="button" id="share-vault-btn" class="primary-cta share-vault-cta">Browse all</button>
           <button type="button" id="saved-finds-btn" class="text-cta">Saved finds</button>
         </div>
       </div>
@@ -86,8 +86,19 @@
       </div>
     </section>
 
+    <!-- vault-browse moved to bottom of page -->
+
+    <main class="main-scroll" id="saved-results">
+      <div class="feed-header">
+        <span>Saved finds</span>
+        <button type="button" id="clear-category-btn" hidden>All finds</button>
+      </div>
+      <div id="status" class="status" hidden></div>
+      <div id="grid" class="grid view-grid" role="list"></div>
+    </main>
+    <!-- Reinserted category browse at bottom -->
     <section class="vault-browse" aria-labelledby="vault-heading">
-      <h2 id="vault-heading">Browse the vault</h2>
+      <h2 id="vault-heading">Browse by category</h2>
       <div class="vault-categories" role="list">
         <button type="button" class="vault-tile" data-category="Tools" role="listitem"><span>Tools</span></button>
         <button type="button" class="vault-tile" data-category="Inspiration" role="listitem"><span>Inspiration</span></button>
@@ -98,14 +109,6 @@
       </div>
     </section>
 
-    <main class="main-scroll" id="saved-results">
-      <div class="feed-header">
-        <span>Saved finds</span>
-        <button type="button" id="clear-category-btn" hidden>All finds</button>
-      </div>
-      <div id="status" class="status" hidden></div>
-      <div id="grid" class="grid view-grid" role="list"></div>
-    </main>
     <div class="bottom-fade" aria-hidden="true"></div>
   </div>
 

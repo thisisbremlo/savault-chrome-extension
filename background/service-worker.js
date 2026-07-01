@@ -56,7 +56,8 @@ api.action.onClicked.addListener(async (tab) => {
 api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (
     message?.type !== "savault:broadcast-saved-slugs" &&
-    message?.type !== "savault:read-saved-slugs"
+    message?.type !== "savault:read-saved-slugs" &&
+    message?.type !== "savault:read-client-id"
   ) {
     return false;
   }
@@ -66,6 +67,13 @@ api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message.type === "savault:read-saved-slugs") {
         sendResponse(
           await sendToActiveSavaultTab({ type: "savault:get-saved-slugs" })
+        );
+        return;
+      }
+
+      if (message.type === "savault:read-client-id") {
+        sendResponse(
+          await sendToActiveSavaultTab({ type: "savault:get-client-id" })
         );
         return;
       }

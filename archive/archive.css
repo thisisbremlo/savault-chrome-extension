@@ -360,8 +360,12 @@ html.embed .app {
 
 .hero {
   position: relative;
-  min-height: 402px;
-  padding: 87px var(--page-x) 0;
+  min-height: auto;
+  padding: 52px var(--page-x) 0;
+}
+
+.app:not(.has-results):not(.has-personal-vault):not(.has-saved-empty) .hero {
+  padding-top: 52px;
 }
 
 .hero-copy {
@@ -390,7 +394,7 @@ html.embed .app {
 .hero-subtitle {
   width: 374px;
   max-width: 100%;
-  margin: 16px 0 0;
+  margin: 16px 0 10px;
   color: var(--ink-soft);
   font-size: 16px;
   font-weight: 400;
@@ -407,8 +411,12 @@ html.embed .app {
 .hero-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 37px;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.app.has-results:not(.has-personal-vault):not(.has-saved-empty) .hero-actions {
+  display: none;
 }
 
 .primary-cta {
@@ -433,8 +441,9 @@ html.embed .app {
 }
 
 .app.has-results .hero {
-  min-height: 218px;
-  padding-top: 82px;
+  min-height: 0;
+  padding-top: 30px;
+  padding-bottom: 0;
 }
 
 .app.has-results .hero-copy,
@@ -446,8 +455,48 @@ html.embed .app {
   width: 430px;
 }
 
-.app.has-results .hero-actions,
-.app.has-results .vault-browse {
+.app.has-results.has-personal-vault .toolbar,
+.app.has-results.has-personal-vault .vault-browse,
+.app.has-results:not(.has-personal-vault):not(.has-saved-empty) .vault-browse {
+  display: none;
+}
+
+.app.has-personal-vault .hero {
+  /* Match main menu hero spacing */
+  min-height: 280px;
+  padding-top: 52px;
+}
+
+.app.has-personal-vault .hero-actions,
+.app.has-saved-empty .hero-actions {
+  display: flex;
+  margin-top: 20px;
+}
+
+.app.has-personal-vault .hero-copy,
+.app.has-personal-vault .hero-title {
+  max-width: 410px;
+}
+
+.app.has-personal-vault .hero-subtitle {
+  width: 410px;
+}
+
+.share-vault-cta {
+  width: 150px;
+}
+
+.app.has-personal-vault .main-scroll {
+  display: block;
+  padding-top: 18px;
+  padding-bottom: 12px;
+}
+
+.app.has-personal-vault .grid {
+  gap: 10px;
+}
+
+.app.has-personal-vault .feed-header {
   display: none;
 }
 
@@ -460,8 +509,8 @@ html.embed .app {
 }
 
 .app.has-saved-empty .hero {
-  min-height: 506px;
-  padding-top: 88px;
+  min-height: 360px;
+  padding-top: 52px;
 }
 
 .app.has-saved-empty .hero-copy,
@@ -474,7 +523,7 @@ html.embed .app {
 }
 
 .app.has-saved-empty .hero-actions {
-  margin-top: 38px;
+  margin-top: 28px;
 }
 
 .app.has-saved-empty .primary-cta {
@@ -607,11 +656,20 @@ html.embed .app {
 .vault-browse {
   position: relative;
   z-index: 2;
-  padding: 0 var(--page-x) 20px;
+  padding: 0 var(--page-x) 0;
+}
+
+.app:not(.has-results):not(.has-personal-vault):not(.has-saved-empty) .vault-browse {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 0 var(--page-x) var(--page-x);
 }
 
 .vault-browse h2 {
-  margin: 0 0 9px;
+  margin: 0 0 6px;
   color: var(--ink);
   font-size: 16px;
   font-weight: 400;
@@ -770,7 +828,8 @@ html.embed .app {
 .app.has-results .main-scroll {
   display: block;
   max-height: none;
-  padding-bottom: 22px;
+  padding-top: 18px;
+  padding-bottom: 12px;
 }
 
 html.embed .main-scroll {
@@ -1060,9 +1119,9 @@ html.embed .main-scroll {
 .card-body {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0;
-  padding: 12px 11px 13px;
+  padding: 13px 11px 13px;
   min-width: 0;
   flex: 1;
 }
@@ -1074,9 +1133,9 @@ html.embed .main-scroll {
   bottom: auto;
   z-index: auto;
   display: flex;
-  justify-content: flex-end;
-  min-height: 111px;
-  padding: 12px 11px 13px;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 13px 11px 13px;
   background: transparent;
   box-shadow: none;
 }
@@ -1157,12 +1216,12 @@ html.embed .main-scroll {
 .price-pill {
   flex-shrink: 0;
   max-width: 72px;
-  padding: 3px 7px;
+  padding: 4px 8px;
   color: #d8d8d8;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
     rgba(237, 237, 237, 0.055);
-  border: 1px solid rgba(237, 237, 237, 0.11);
+  border: 0;
   font-size: 10px;
   font-weight: 600;
   line-height: 1;
@@ -1246,6 +1305,47 @@ html.embed .main-scroll {
   border: 1px solid var(--line);
   font-size: 12px;
   text-align: center;
+}
+
+.personal-empty {
+  min-height: 172px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 50;
+  padding: 10px 16px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .bottom-fade {
