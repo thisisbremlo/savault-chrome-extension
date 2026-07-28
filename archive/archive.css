@@ -247,7 +247,7 @@ html.embed .app {
   color: var(--ink);
   background: transparent;
   border: 1px solid rgba(228, 228, 228, 0.2);
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
@@ -291,7 +291,7 @@ html.embed .app {
   color: var(--paper-ink);
   background: var(--paper);
   border: 1px solid rgba(0, 0, 0, 0.16);
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
@@ -337,7 +337,7 @@ html.embed .app {
   width: 32px;
   height: 32px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: 0;
   color: rgba(237, 237, 237, 0.62);
   transition: color 0.15s ease, background 0.15s ease;
 }
@@ -590,7 +590,7 @@ html.embed .app {
   color: #a6a6a6;
   background: #303030;
   border: 1px solid #3f3f3f;
-  border-radius: 8px;
+  border-radius: 0;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
@@ -640,7 +640,7 @@ html.embed .app {
   color: #bebebe;
   background: #303030;
   border: 1px solid #3f3f3f;
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 400;
   transition: border-color 0.2s ease, background 0.2s ease;
