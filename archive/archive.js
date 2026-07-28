@@ -5,6 +5,7 @@ import {
   normalizeSlug,
   setExtensionSavedSlugs,
 } from "../lib/saved-storage.js";
+import { getCachedArchive, setCachedArchive } from "../lib/archive-cache.js";
 import { api } from "../lib/browser-api.js";
 import {
   getViewMode,
@@ -90,6 +91,14 @@ if (personalVaultBtn) {
   personalVaultBtn.onclick = () => openPersonalVault();
 }
 
+// Submit a find button
+const submitFindBtn = document.getElementById("submit-find-btn");
+if (submitFindBtn) {
+  submitFindBtn.onclick = () => {
+    window.location.href = "submit.html" + location.search;
+  };
+}
+
 let allItems = [];
 let activeCategory = "All";
 let activePricing = "All";
@@ -100,7 +109,7 @@ let archiveLoadPromise = null;
 let isPersonalVault = false;
 let savedEmptyMode = false;
 
-const SHARE_BASE_URL = "https://savault.framer.website/saved";
+const SHARE_BASE_URL = "https://savault.framer.website/vault";
 const CLIENT_ID_KEY = "savault_client_id";
 
 const ARCHIVE_HERO = {
@@ -612,7 +621,9 @@ async function setActiveCategory(category) {
   if (pricingEl) pricingEl.value = "All";
   setBookmarkFilter(false);
   updateCategoryTiles();
-  showResults();
+  transitionContent(() => {
+    showResults();
+  });
   await ensureArchiveLoaded();
   renderItems(filterItems());
 }
@@ -623,7 +634,9 @@ async function openArchive({ category = "All", savedOnly = false } = {}) {
   if (pricingEl) pricingEl.value = "All";
   setBookmarkFilter(savedOnly);
   updateCategoryTiles();
-  showResults();
+  transitionContent(() => {
+    showResults();
+  });
   await ensureArchiveLoaded();
   renderItems(filterItems());
 }
@@ -636,7 +649,9 @@ async function openPersonalVault() {
   if (newFilterEl) newFilterEl.checked = false;
   setBookmarkFilter(true);
   updateCategoryTiles();
-  showPersonalVault();
+  transitionContent(() => {
+    showPersonalVault();
+  });
   await ensureArchiveLoaded();
   renderItems(filterItems());
 }
@@ -685,7 +700,7 @@ function renderCard(item) {
   ].join("");
 
   return `
-    <div class="card" role="listitem">
+    <div class="card" role="listitem" data-vault-slug="${escapeHtml(savedSlug)}">
       <a class="card-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
         <div class="cover-wrap">
           ${coverBlock}
@@ -795,6 +810,32 @@ function renderItems(items) {
   bindMediaLoad(gridEl);
 }
 
+function transitionContent(callback) {
+  const mainScroll = document.querySelector(".main-scroll");
+  const heroCopy = document.querySelector(".hero-copy");
+
+  if (heroCopy) heroCopy.classList.add("is-transitioning");
+
+  if (mainScroll) {
+    mainScroll.classList.remove("is-visible");
+    mainScroll.classList.add("is-transitioning");
+  }
+
+  requestAnimationFrame(() => {
+    callback();
+
+    if (heroCopy) {
+      heroCopy.classList.remove("is-transitioning");
+      heroCopy.classList.add("is-visible");
+    }
+
+    if (mainScroll) {
+      mainScroll.classList.remove("is-transitioning");
+      mainScroll.classList.add("is-visible");
+    }
+  });
+}
+
 async function loadArchive() {
   if (!isConfigured()) {
     showStatus(
@@ -805,24 +846,62 @@ async function loadArchive() {
     return;
   }
 
+  const [extensionSlugs, activeTabSlugs] = await Promise.all([
+    getExtensionSavedSlugs(),
+    getActiveSavaultSavedSlugs(),
+  ]);
+  const bookmarks = activeTabSlugs
+    ? await setExtensionSavedSlugs(activeTabSlugs)
+    : extensionSlugs;
+  savedSlugs = new Set(bookmarks);
+
+  const cached = await getCachedArchive();
+
+  if (cached) {
+    allItems = cached.items;
+    archiveLoaded = true;
+    updateVaultCTAs();
+    activePricing = "All";
+    renderCategoryFilter(allItems);
+    renderPricingFilter(allItems);
+    updateCategoryTiles();
+    renderItems(filterItems());
+
+    if (cached.fresh) return;
+
+    refreshBtn.disabled = true;
+    refreshBtn.classList.add("is-spinning");
+
+    try {
+      const settings = await getSettings();
+      const freshItems = await queryArchive(settings);
+      allItems = freshItems;
+      await setCachedArchive(freshItems);
+      activePricing = "All";
+      renderCategoryFilter(allItems);
+      renderPricingFilter(allItems);
+      updateCategoryTiles();
+      renderItems(filterItems());
+    } catch {
+      /* keep stale cache */
+    } finally {
+      refreshBtn.disabled = false;
+      refreshBtn.classList.remove("is-spinning");
+    }
+    return;
+  }
+
   showStatus("Loading finds...", "loading");
   refreshBtn.disabled = true;
   refreshBtn.classList.add("is-spinning");
 
   try {
     const settings = await getSettings();
-    const [items, extensionSlugs, activeTabSlugs] = await Promise.all([
-      queryArchive(settings),
-      getExtensionSavedSlugs(),
-      getActiveSavaultSavedSlugs()
-    ]);
-    const bookmarks = activeTabSlugs
-      ? await setExtensionSavedSlugs(activeTabSlugs)
-      : extensionSlugs;
+    const items = await queryArchive(settings);
     allItems = items;
-    savedSlugs = new Set(bookmarks);
-    updateVaultCTAs();
     archiveLoaded = true;
+    await setCachedArchive(items);
+    updateVaultCTAs();
     hideStatus();
     activePricing = "All";
     renderCategoryFilter(allItems);
@@ -842,6 +921,7 @@ searchEl.addEventListener("input", () => renderItems(filterItems()));
 categoryEl.addEventListener("change", () => {
   activeCategory = categoryEl.value;
   updateCategoryTiles();
+  transitionContent(() => {});
   renderItems(filterItems());
 });
 pricingEl.addEventListener("change", () => {
@@ -855,6 +935,7 @@ if (bookmarksFilterEl) {
   bookmarksFilterEl.addEventListener("change", () => {
     setBookmarkFilter(bookmarksFilterEl.checked);
     updateCategoryTiles();
+    transitionContent(() => {});
     renderItems(filterItems());
   });
 }
@@ -866,6 +947,7 @@ clearCategoryBtn?.addEventListener("click", () => {
   setBookmarkFilter(false);
   activeCategory = "All";
   updateCategoryTiles();
+  transitionContent(() => {});
   renderItems(filterItems());
 });
 categoryTileEls.forEach((tile) => {
@@ -885,6 +967,11 @@ gridEl.addEventListener("click", async (e) => {
   const slug = normalizeSlug(btn.dataset.slug);
   const legacyId = normalizeSlug(btn.dataset.legacyId);
   if (!slug) return;
+
+  btn.classList.remove("is-pop");
+  void btn.offsetWidth;
+  btn.classList.add("is-pop");
+  btn.addEventListener("animationend", () => btn.classList.remove("is-pop"), { once: true });
 
   if (savedSlugs.has(slug) || (legacyId && savedSlugs.has(legacyId))) {
     savedSlugs.delete(slug);

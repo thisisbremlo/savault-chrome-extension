@@ -240,6 +240,7 @@ html.embed .app {
 }
 
 .header-nav a,
+.header-link,
 .header-vault-btn,
 .text-cta {
   padding: 0;
@@ -263,6 +264,7 @@ html.embed .app {
 }
 
 .header-nav a:hover,
+.header-link:hover,
 .header-vault-btn:hover,
 .text-cta:hover {
   color: #ffffff;
@@ -372,6 +374,18 @@ html.embed .app {
   position: relative;
   z-index: 2;
   max-width: 374px;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.hero-copy.is-transitioning {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.hero-copy.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-title {
@@ -394,7 +408,7 @@ html.embed .app {
 .hero-subtitle {
   width: 374px;
   max-width: 100%;
-  margin: 16px 0 10px;
+  margin: 16px 0 0;
   color: var(--ink-soft);
   font-size: 16px;
   font-weight: 400;
@@ -412,7 +426,7 @@ html.embed .app {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 24px;
 }
 
 .app.has-results:not(.has-personal-vault):not(.has-saved-empty) .hero-actions {
@@ -443,7 +457,7 @@ html.embed .app {
 .app.has-results .hero {
   min-height: 0;
   padding-top: 30px;
-  padding-bottom: 0;
+  padding-bottom: 16px;
 }
 
 .app.has-results .hero-copy,
@@ -470,7 +484,7 @@ html.embed .app {
 .app.has-personal-vault .hero-actions,
 .app.has-saved-empty .hero-actions {
   display: flex;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .app.has-personal-vault .hero-copy,
@@ -508,9 +522,15 @@ html.embed .app {
   display: none;
 }
 
+.app.has-saved-empty .header {
+  height: 62px;
+  margin: 0;
+  padding: 20px var(--page-x) 10px;
+}
+
 .app.has-saved-empty .hero {
   min-height: 360px;
-  padding-top: 52px;
+  padding-top: 48px;
 }
 
 .app.has-saved-empty .hero-copy,
@@ -523,7 +543,7 @@ html.embed .app {
 }
 
 .app.has-saved-empty .hero-actions {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .app.has-saved-empty .primary-cta {
@@ -669,7 +689,7 @@ html.embed .app {
 }
 
 .vault-browse h2 {
-  margin: 0 0 6px;
+  margin: 0 0 16px;
   color: var(--ink);
   font-size: 16px;
   font-weight: 400;
@@ -813,6 +833,30 @@ html.embed .app {
   .vault-tile.is-active span {
     transform: none;
   }
+
+  .card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .bookmark-btn.is-pop {
+    animation: none;
+  }
+
+  .main-scroll.is-transitioning,
+  .main-scroll.is-visible {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-copy.is-transitioning,
+  .hero-copy.is-visible {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .main-scroll {
@@ -830,6 +874,18 @@ html.embed .app {
   max-height: none;
   padding-top: 18px;
   padding-bottom: 12px;
+}
+
+.main-scroll.is-transitioning {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.main-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 html.embed .main-scroll {
@@ -903,6 +959,9 @@ html.embed .main-scroll {
     #242424;
   border: 1px solid rgba(228, 228, 228, 0.14);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: card-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   transition:
     border-color 0.18s ease,
     background 0.18s ease,
@@ -996,6 +1055,30 @@ html.embed .main-scroll {
   }
 }
 
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.grid .card:nth-child(1) { animation-delay: 0s; }
+.grid .card:nth-child(2) { animation-delay: 0.03s; }
+.grid .card:nth-child(3) { animation-delay: 0.06s; }
+.grid .card:nth-child(4) { animation-delay: 0.09s; }
+.grid .card:nth-child(5) { animation-delay: 0.12s; }
+.grid .card:nth-child(6) { animation-delay: 0.15s; }
+.grid .card:nth-child(7) { animation-delay: 0.18s; }
+.grid .card:nth-child(8) { animation-delay: 0.21s; }
+.grid .card:nth-child(9) { animation-delay: 0.24s; }
+.grid .card:nth-child(10) { animation-delay: 0.27s; }
+.grid .card:nth-child(11) { animation-delay: 0.3s; }
+.grid .card:nth-child(12) { animation-delay: 0.33s; }
+
 .cover-img {
   position: absolute;
   inset: 0;
@@ -1085,6 +1168,17 @@ html.embed .main-scroll {
   opacity: 1;
   cursor: pointer;
   transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.bookmark-btn.is-pop {
+  animation: bookmark-pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes bookmark-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.25); }
+  60% { transform: scale(0.92); }
+  100% { transform: scale(1); }
 }
 
 .grid.view-grid .bookmark-btn {
