@@ -1,5 +1,49 @@
 const api = globalThis.browser ?? globalThis.chrome;
 
+const CACHE_KEY = "savault_archive_cache";
+const CACHE_TS_KEY = "savault_archive_cache_ts";
+const CACHE_MAX_AGE = 10 * 60 * 1000;
+
+function storageGet(keys) {
+  return new Promise((resolve) => api.storage.local.get(keys, resolve));
+}
+
+function storageSet(items) {
+  return new Promise((resolve) => api.storage.local.set(items, resolve));
+}
+
+async function prefetchArchive() {
+  try {
+    const res = await storageGet([CACHE_TS_KEY]);
+    const ts = res[CACHE_TS_KEY] || 0;
+    if (Date.now() - ts < CACHE_MAX_AGE) return;
+
+    const resp = await fetch(
+      "https://loopa-archive-api.bennimkbremer.workers.dev/api/archive",
+      { headers: { Accept: "application/json" } }
+    );
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const items = data.items;
+    if (!Array.isArray(items) || !items.length) return;
+
+    await storageSet({
+      [CACHE_KEY]: items,
+      [CACHE_TS_KEY]: Date.now(),
+    });
+  } catch {
+    /* best-effort prefetch */
+  }
+}
+
+api.runtime.onInstalled.addListener(() => {
+  prefetchArchive();
+});
+
+api.runtime.onStartup.addListener(() => {
+  prefetchArchive();
+});
+
 const BLOCKED_SCHEMES = [
   "chrome:",
   "chrome-extension:",
