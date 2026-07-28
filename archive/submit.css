@@ -81,7 +81,7 @@
 
 /* Submit Form Section */
 .submit-form-section {
-  padding: 52px var(--page-x) 40px;
+  padding: 44px var(--page-x) 48px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -90,11 +90,12 @@
 .form-container {
   position: relative;
   z-index: 2;
+  max-width: 430px;
 }
 
 .form-title {
   max-width: 374px;
-  margin: 0 0 8px;
+  margin: 0 0 12px;
   color: var(--ink);
   font-size: 28px;
   font-weight: 400;
@@ -108,7 +109,7 @@
 .form-subtitle {
   width: 374px;
   max-width: 100%;
-  margin: 0 0 24px;
+  margin: 0 0 32px;
   color: var(--ink-soft);
   font-size: 14px;
   font-weight: 400;
@@ -122,13 +123,13 @@
 .submit-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .form-label {
@@ -149,7 +150,7 @@
 .form-textarea,
 .form-select {
   width: 100%;
-  padding: 10px 14px;
+  padding: 11px 14px;
   background: #303030;
   border: 1px solid #3f3f3f;
   border-radius: 0;
@@ -207,7 +208,7 @@
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .btn-submit,
@@ -315,6 +316,6 @@ html.embed .submit-app {
   }
 
   .submit-form-section {
-    padding: 32px 20px 32px;
+    padding: 32px 20px 40px;
   }
 }
