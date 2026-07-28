@@ -2,8 +2,8 @@
   const api = globalThis.browser ?? globalThis.chrome;
   if (!api?.storage?.local) return;
 
-  const STORAGE_KEY = "savault_saved_websites";
-  const STORAGE_EVENT = "savault_saved_websites_changed";
+  const STORAGE_KEY = "savault_vault_items";
+  const STORAGE_EVENT = "savault_vault_changed";
   const OLD_CLIENT_ID_KEY = "loopa_client_id";
   const CLIENT_ID_KEY = "savault_client_id";
   const SLUG_FIELDS = ["slug", "id", "cmsSlug", "framerCMSSlug"];
