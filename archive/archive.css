@@ -266,6 +266,15 @@ html.embed .app {
   background: rgba(255, 255, 255, 0.06);
 }
 
+#submit-find-btn {
+  transition: none;
+}
+
+#submit-find-btn:hover {
+  color: var(--ink);
+  background: transparent;
+}
+
 .text-cta {
   height: 42px;
   display: inline-flex;
@@ -593,7 +602,7 @@ html.embed .app {
   color: #a6a6a6;
   background: #303030;
   border: 1px solid #3f3f3f;
-  border-radius: 10px;
+  border-radius: 0;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
@@ -643,7 +652,7 @@ html.embed .app {
   color: #bebebe;
   background: #303030;
   border: 1px solid #3f3f3f;
-  border-radius: 10px;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 400;
   transition: border-color 0.2s ease, background 0.2s ease;
