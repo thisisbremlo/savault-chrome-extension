@@ -99,6 +99,36 @@ if (submitFindBtn) {
   };
 }
 
+// Brand logo - return to starting UI (initial hero state)
+const brandBtn = document.getElementById("brand-btn");
+if (brandBtn) {
+  brandBtn.onclick = () => {
+    isPersonalVault = false;
+    savedEmptyMode = false;
+    const appEl = document.querySelector(".app");
+    const mainScroll = document.querySelector(".main-scroll");
+
+    if (mainScroll) {
+      mainScroll.classList.remove("is-visible");
+      mainScroll.classList.add("is-transitioning");
+    }
+
+    setTimeout(() => {
+      appEl?.classList.remove("has-results", "has-personal-vault", "has-saved-empty");
+      if (searchEl) searchEl.value = "";
+      if (newFilterEl) newFilterEl.checked = false;
+      setBookmarkFilter(false);
+      updateCategoryTiles();
+      if (appEl) appEl.scrollTop = 0;
+
+      crossfadeHero(
+        "Browse every site in the vault.",
+        "Search curated websites, tools, libraries, and design references — organized to help you find better resources faster and save the ones worth revisiting."
+      );
+    }, 130);
+  };
+}
+
 let allItems = [];
 let activeCategory = "All";
 let activePricing = "All";
@@ -113,21 +143,21 @@ const SHARE_BASE_URL = "https://savault.framer.website/vault";
 const CLIENT_ID_KEY = "savault_client_id";
 
 const ARCHIVE_HERO = {
-  title: "Explore the Savault archive.",
+  title: "Browse every site in the vault.",
   subtitle:
-    "Browse curated websites, tools, libraries, and design resources - filtered for faster inspiration and better creative research.",
+    "Search curated websites, tools, libraries, and design references — organized to help you find better resources faster and save the ones worth revisiting.",
 };
 
 const SAVED_EMPTY_HERO = {
-  title: "Your vault is still empty.",
+  title: "Your vault is empty.",
   subtitle:
-    "Start saving websites, tools, and resources from the Savault archive. Your favorites will appear here.",
+    "Save websites, tools, and resources from the archive. They'll appear here for quick access.",
 };
 
 const PERSONAL_VAULT_HERO = {
-  title: "Your personal Savault.",
+  title: "Your personal vault.",
   subtitle:
-    "Everything you saved, kept in one place - ready to revisit, reuse, or share whenever inspiration is needed.",
+    "Everything you've bookmarked, in one place — ready to revisit, reuse, or share.",
 };
 
 const NON_PRICING_VALUES = new Set([
@@ -516,8 +546,6 @@ function showResults() {
   const appEl = document.querySelector(".app");
   appEl?.classList.add("has-results");
   appEl?.classList.remove("has-saved-empty", "has-personal-vault");
-  if (heroTitleEl) heroTitleEl.textContent = ARCHIVE_HERO.title;
-  if (heroSubtitleEl) heroSubtitleEl.textContent = ARCHIVE_HERO.subtitle;
   if (viewSavedBtn) viewSavedBtn.textContent = "Browse all";
   if (viewSavedBtn) viewSavedBtn.hidden = false;
   if (shareVaultBtn) {
@@ -527,6 +555,7 @@ function showResults() {
   savedFindsBtn?.removeAttribute("hidden");
   if (appEl) appEl.scrollTop = 0;
   updateVaultCTAs();
+  crossfadeHero(ARCHIVE_HERO.title, ARCHIVE_HERO.subtitle);
 }
 
 function showSavedEmpty() {
@@ -535,13 +564,12 @@ function showSavedEmpty() {
   const appEl = document.querySelector(".app");
   appEl?.classList.add("has-saved-empty", "has-personal-vault");
   appEl?.classList.remove("has-results");
-  if (heroTitleEl) heroTitleEl.textContent = SAVED_EMPTY_HERO.title;
-  if (heroSubtitleEl) heroSubtitleEl.textContent = SAVED_EMPTY_HERO.subtitle;
   if (viewSavedBtn) viewSavedBtn.hidden = true;
   if (shareVaultBtn) shareVaultBtn.hidden = false;
   savedFindsBtn?.setAttribute("hidden", "");
   if (appEl) appEl.scrollTop = 0;
   updateVaultCTAs();
+  crossfadeHero(SAVED_EMPTY_HERO.title, SAVED_EMPTY_HERO.subtitle);
 }
 
 function showPersonalVault() {
@@ -550,13 +578,12 @@ function showPersonalVault() {
   const appEl = document.querySelector(".app");
   appEl?.classList.add("has-results", "has-personal-vault");
   appEl?.classList.remove("has-saved-empty");
-  if (heroTitleEl) heroTitleEl.textContent = PERSONAL_VAULT_HERO.title;
-  if (heroSubtitleEl) heroSubtitleEl.textContent = PERSONAL_VAULT_HERO.subtitle;
   if (viewSavedBtn) viewSavedBtn.hidden = true;
   if (shareVaultBtn) shareVaultBtn.hidden = false;
   savedFindsBtn?.setAttribute("hidden", "");
   if (appEl) appEl.scrollTop = 0;
   updateVaultCTAs();
+  crossfadeHero(PERSONAL_VAULT_HERO.title, PERSONAL_VAULT_HERO.subtitle);
 }
 
 function updateVaultCTAs() {
@@ -818,16 +845,37 @@ function transitionContent(callback) {
   requestAnimationFrame(() => {
     callback();
 
-    if (heroCopy) {
-      heroCopy.classList.remove("is-transitioning");
-      heroCopy.classList.add("is-visible");
-    }
+    requestAnimationFrame(() => {
+      if (heroCopy) {
+        heroCopy.classList.remove("is-transitioning");
+        heroCopy.classList.add("is-visible");
+      }
 
-    if (mainScroll) {
-      mainScroll.classList.remove("is-transitioning");
-      mainScroll.classList.add("is-visible");
-    }
+      if (mainScroll) {
+        mainScroll.classList.remove("is-transitioning");
+        mainScroll.classList.add("is-visible");
+      }
+    });
   });
+}
+
+function crossfadeHero(title, subtitle, callback) {
+  const heroCopy = document.querySelector(".hero-copy");
+
+  if (heroCopy) heroCopy.classList.add("is-transitioning");
+
+  setTimeout(() => {
+    if (heroTitleEl) heroTitleEl.textContent = title;
+    if (heroSubtitleEl) heroSubtitleEl.textContent = subtitle;
+    if (callback) callback();
+
+    requestAnimationFrame(() => {
+      if (heroCopy) {
+        heroCopy.classList.remove("is-transitioning");
+        heroCopy.classList.add("is-visible");
+      }
+    });
+  }, 130);
 }
 
 async function loadArchive() {

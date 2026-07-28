@@ -4,6 +4,14 @@ import { api } from "../lib/browser-api.js";
 
 const isEmbed = new URLSearchParams(location.search).has("embed");
 
+// Brand logo - return to archive
+const brandBtn = document.getElementById("brand-btn");
+if (brandBtn) {
+  brandBtn.onclick = () => {
+    window.location.href = "archive.html" + location.search;
+  };
+}
+
 if (isEmbed) {
   document.documentElement.classList.add("embed");
   document.getElementById("close-btn")?.removeAttribute("hidden");

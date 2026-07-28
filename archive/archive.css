@@ -221,8 +221,16 @@ html.embed .app {
 .brand {
   display: flex;
   align-items: center;
+  padding: 0;
   color: var(--ink);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   text-decoration: none;
+}
+
+.brand:hover {
+  opacity: 0.8;
 }
 
 .brand-mark {
@@ -395,18 +403,21 @@ html.embed .app {
   position: relative;
   z-index: 2;
   max-width: 420px;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .hero-copy.is-transitioning {
   opacity: 0;
   transform: translateY(4px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
 .hero-copy.is-visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-title {
@@ -449,10 +460,21 @@ html.embed .app {
   align-items: center;
   gap: 16px;
   margin-top: 32px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hero-actions.is-hidden {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
 }
 
 .app.has-results:not(.has-personal-vault):not(.has-saved-empty) .hero-actions {
-  display: none;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
 }
 
 .primary-cta {
@@ -496,19 +518,23 @@ html.embed .app {
 .app.has-results.has-personal-vault .toolbar,
 .app.has-results.has-personal-vault .vault-browse,
 .app.has-results:not(.has-personal-vault):not(.has-saved-empty) .vault-browse {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+  padding: 0;
 }
 
 .app.has-personal-vault .hero {
-  /* Match main menu hero spacing */
-  min-height: 280px;
-  padding-top: 52px;
+  min-height: auto;
+  padding-top: 40px;
+  padding-bottom: 0;
 }
 
 .app.has-personal-vault .hero-actions,
 .app.has-saved-empty .hero-actions {
   display: flex;
-  margin-top: 24px;
+  margin-top: 12px;
 }
 
 .app.has-personal-vault .hero-copy,
@@ -526,8 +552,12 @@ html.embed .app {
 
 .app.has-personal-vault .main-scroll {
   display: block;
-  padding-top: 18px;
+  padding-top: 0;
   padding-bottom: 12px;
+}
+
+.app.has-personal-vault .main-scroll .grid {
+  margin-top: 32px;
 }
 
 .app.has-personal-vault .grid {
@@ -540,10 +570,14 @@ html.embed .app {
 
 .app.has-saved-empty .toolbar,
 .app.has-saved-empty .vault-browse,
-.app.has-saved-empty .main-scroll,
 .app.has-saved-empty .bottom-fade,
 .app.has-saved-empty .text-cta {
   display: none;
+}
+
+.app.has-saved-empty .main-scroll {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .app.has-saved-empty .header {
@@ -704,6 +738,8 @@ html.embed .app {
   position: relative;
   z-index: 2;
   padding: 0 var(--page-x) 0;
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 .app:not(.has-results):not(.has-personal-vault):not(.has-saved-empty) .vault-browse {
@@ -884,6 +920,11 @@ html.embed .app {
     opacity: 1;
     transform: none;
   }
+
+  .hero-actions,
+  .vault-browse {
+    transition: none;
+  }
 }
 
 .main-scroll {
@@ -899,20 +940,20 @@ html.embed .app {
 .app.has-results .main-scroll {
   display: block;
   max-height: none;
-  padding-top: 18px;
+  padding-top: 8px;
   padding-bottom: 12px;
 }
 
 .main-scroll.is-transitioning {
   opacity: 0;
   transform: translateY(6px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
 .main-scroll.is-visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 html.embed .main-scroll {
