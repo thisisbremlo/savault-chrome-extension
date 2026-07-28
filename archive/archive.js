@@ -784,20 +784,14 @@ function bindMediaLoad(root) {
 
 function renderItems(items) {
   if (!items.length) {
-    if (savedSlugs.size === 0 && (isPersonalVault || bookmarksFilterEl?.checked)) {
+    if (savedSlugs.size === 0 && isPersonalVault) {
       gridEl.innerHTML = "";
       showSavedEmpty();
       return;
     }
 
-    if (isPersonalVault) {
-      gridEl.innerHTML = `<p class="empty personal-empty">Your vault is still empty.</p>`;
-      statusEl.hidden = true;
-      return;
-    }
-
     if (bookmarksFilterEl?.checked) {
-      gridEl.innerHTML = `<p class="empty">No saved finds match your search.</p>`;
+      gridEl.innerHTML = `<p class="empty">No saved finds yet. Bookmark websites from the archive to see them here.</p>`;
       return;
     }
 
