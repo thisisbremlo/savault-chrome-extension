@@ -123,7 +123,7 @@
 .submit-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .form-group {
