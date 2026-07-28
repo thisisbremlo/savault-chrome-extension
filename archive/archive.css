@@ -243,24 +243,19 @@ html.embed .app {
 .header-link,
 .header-vault-btn,
 .text-cta {
-  padding: 0;
+  padding: 0 16px;
   color: var(--ink);
   background: transparent;
-  border: 0;
+  border: 1px solid rgba(228, 228, 228, 0.2);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.28;
   text-decoration: none;
   white-space: nowrap;
-  font-synthesis: none;
-  font-kerning: normal;
-  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transform: translateZ(0);
-  backface-visibility: hidden;
   cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
 .header-nav a:hover,
@@ -268,6 +263,15 @@ html.embed .app {
 .header-vault-btn:hover,
 .text-cta:hover {
   color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(228, 228, 228, 0.35);
+}
+
+.text-cta {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-actions {
@@ -281,14 +285,13 @@ html.embed .app {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 0;
-  width: 125px;
-  height: 34px;
-  padding: 0;
+  min-width: 120px;
+  height: 36px;
+  padding: 0 16px;
   color: var(--paper-ink);
   background: var(--paper);
   border: 1px solid rgba(0, 0, 0, 0.16);
-  border-radius: 0;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
@@ -302,11 +305,20 @@ html.embed .app {
   -moz-osx-font-smoothing: grayscale;
   transform: translateZ(0);
   backface-visibility: hidden;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .open-link:hover,
 .primary-cta:hover {
   background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.open-link:active,
+.primary-cta:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn {
@@ -322,10 +334,12 @@ html.embed .app {
 
 .btn-icon,
 .btn-close {
-  width: 25px;
-  height: 25px;
+  width: 32px;
+  height: 32px;
   padding: 0;
+  border-radius: 8px;
   color: rgba(237, 237, 237, 0.62);
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 #view-toggle,
@@ -434,8 +448,6 @@ html.embed .app {
 }
 
 .primary-cta {
-  width: 113px;
-  height: 34px;
   font-size: 14px;
 }
 
@@ -497,7 +509,7 @@ html.embed .app {
 }
 
 .share-vault-cta {
-  width: 150px;
+  min-width: 140px;
 }
 
 .app.has-personal-vault .main-scroll {
@@ -547,7 +559,7 @@ html.embed .app {
 }
 
 .app.has-saved-empty .primary-cta {
-  width: 116px;
+  /* inherits base button styles */
 }
 
 .app.has-results .toolbar {
@@ -578,6 +590,8 @@ html.embed .app {
   color: #a6a6a6;
   background: #303030;
   border: 1px solid #3f3f3f;
+  border-radius: 8px;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .search-icon {
@@ -626,9 +640,10 @@ html.embed .app {
   color: #bebebe;
   background: #303030;
   border: 1px solid #3f3f3f;
-  border-radius: 0;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 400;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .filter-select select {
