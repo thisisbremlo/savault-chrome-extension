@@ -15,7 +15,7 @@ function corsHeaders(request, extra = {}) {
   const allowOrigin = isAllowedOrigin(origin) ? origin : "null";
   return {
     "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Savault-Key",
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
@@ -52,7 +52,7 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
 
-    if (request.method !== "GET") {
+    if (request.method !== "GET" && request.method !== "POST") {
       return json({ error: "Method not allowed" }, 405, request);
     }
 
@@ -66,6 +66,9 @@ export default {
     }
 
     if (url.pathname === "/api/archive") {
+      if (request.method !== "GET") {
+        return json({ error: "Method not allowed" }, 405, request);
+      }
       try {
         const items = await fetchArchiveItems(env);
         return json({ items }, 200, request, {
@@ -74,6 +77,62 @@ export default {
       } catch (err) {
         return json(
           { error: err.message || "Failed to load archive" },
+          500,
+          request
+        );
+      }
+    }
+
+    if (url.pathname === "/api/submit") {
+      if (request.method !== "POST") {
+        return json({ error: "Method not allowed" }, 405, request);
+      }
+      try {
+        const submission = await request.json();
+        
+        // Validate submission
+        if (!submission.url || !submission.category) {
+          return json({ error: "Missing required fields" }, 400, request);
+        }
+
+        // Validate URL format
+        try {
+          new URL(submission.url);
+        } catch {
+          return json({ error: "Invalid URL format" }, 400, request);
+        }
+
+        // Send to Discord webhook if configured
+        const webhookUrl = env.DISCORD_WEBHOOK_URL?.trim();
+        if (webhookUrl) {
+          const embed = {
+            title: "New Savault Submission",
+            color: 3447003,
+            fields: [
+              { name: "URL", value: submission.url, inline: false },
+              { name: "Category", value: submission.category, inline: true },
+              { name: "Description", value: submission.description || "N/A", inline: false },
+              { name: "Why Feature", value: submission.whyFeature || "N/A", inline: false },
+            ],
+            timestamp: new Date().toISOString(),
+          };
+
+          try {
+            await fetch(webhookUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ embeds: [embed] }),
+            });
+          } catch (webhookError) {
+            console.error("Discord webhook error:", webhookError);
+            // Don't fail the request if webhook fails
+          }
+        }
+
+        return json({ ok: true, message: "Submission received" }, 200, request);
+      } catch (err) {
+        return json(
+          { error: err.message || "Failed to process submission" },
           500,
           request
         );

@@ -1,0 +1,320 @@
+/* Submit Form Styles */
+
+.submit-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.submit-app .header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  height: 62px;
+  margin: 0;
+  padding: 20px var(--page-x) 10px;
+  background: var(--frame);
+}
+
+.submit-content {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(237, 237, 237, 0.12) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.submit-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.submit-content::-webkit-scrollbar-thumb {
+  background: rgba(237, 237, 237, 0.16);
+}
+
+/* Duplicate State */
+.duplicate-state {
+  padding: 48px var(--page-x) 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 660px;
+}
+
+.duplicate-hero {
+  position: relative;
+  z-index: 2;
+}
+
+.duplicate-hero .hero-title {
+  max-width: 374px;
+  margin: 0 0 16px;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.09;
+}
+
+.duplicate-hero .hero-subtitle {
+  width: 374px;
+  max-width: 100%;
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.28;
+}
+
+.duplicate-hero .hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 0;
+}
+
+#browse-archive-btn {
+  width: 130px;
+}
+
+/* Submit Form Section */
+.submit-form-section {
+  padding: 52px var(--page-x) 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container {
+  position: relative;
+  z-index: 2;
+}
+
+.form-title {
+  max-width: 374px;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.09;
+  font-synthesis: none;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+.form-subtitle {
+  width: 374px;
+  max-width: 100%;
+  margin: 0 0 24px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42;
+  font-synthesis: none;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* Form Elements */
+.submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+.required-indicator {
+  color: var(--danger);
+  margin-left: 4px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: #303030;
+  border: 1px solid #3f3f3f;
+  border-radius: 0;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #b0b0b0;
+  opacity: 1;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: 0;
+  border-color: rgba(228, 228, 228, 0.42);
+  background: #333333;
+  color: var(--ink);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23aeb0b0' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+  padding-right: 40px;
+}
+
+.form-select option {
+  background: #303030;
+  color: var(--ink);
+}
+
+.form-error {
+  font-size: 12px;
+  color: var(--danger);
+  line-height: 1.33;
+  min-height: 16px;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-submit,
+.form-actions .open-link,
+.form-actions .primary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 125px;
+  height: 34px;
+  padding: 0;
+  color: var(--paper-ink);
+  background: var(--paper);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.28;
+  text-decoration: none;
+  cursor: pointer;
+  font-synthesis: none;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover,
+.form-actions .open-link:hover,
+.form-actions .primary-cta:hover {
+  background: #ffffff;
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Submit Status Messages */
+.submit-status {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.submit-status.success {
+  background: rgba(132, 204, 22, 0.1);
+  color: #84cc16;
+  border: 1px solid rgba(132, 204, 22, 0.2);
+}
+
+.submit-status.error {
+  background: rgba(223, 122, 122, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(223, 122, 122, 0.2);
+}
+
+.submit-status.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Embed mode adjustments */
+html.embed .submit-app {
+  width: 100%;
+  height: 100%;
+}
+
+/* Bottom Fade */
+.bottom-fade {
+  position: sticky;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: block;
+  height: 76px;
+  margin-top: -76px;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(30, 30, 32, 0), rgba(30, 30, 32, 0.08) 20%, rgba(30, 30, 32, 0.24) 42%, rgba(30, 30, 32, 0.82));
+  backdrop-filter: blur(14px) saturate(0.9);
+  -webkit-backdrop-filter: blur(14px) saturate(0.9);
+  mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.08) 20%, rgba(0, 0, 0, 0.16) 22%, rgba(0, 0, 0, 0.82) 68%, #000);
+  -webkit-mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.08) 20%, rgba(0, 0, 0, 0.16) 22%, rgba(0, 0, 0, 0.82) 68%, #000);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .form-title {
+    font-size: 24px;
+  }
+
+  .form-subtitle,
+  .duplicate-hero .hero-subtitle {
+    font-size: 13px;
+  }
+
+  .submit-form-section {
+    padding: 32px 20px 32px;
+  }
+}
