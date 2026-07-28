@@ -1,6 +1,6 @@
 (function () {
-  const ROOT_ID = "savault-archive-root";
-  const CLEANUP_KEY = "__savaultArchiveCleanup";
+  const ROOT_ID = "savault-submit-root";
+  const CLEANUP_KEY = "__savaultSubmitCleanup";
 
   const existing = document.getElementById(ROOT_ID);
   if (existing) {
@@ -13,7 +13,7 @@
   }
 
   const api = globalThis.browser ?? globalThis.chrome;
-  const archiveUrl = `${api.runtime.getURL("archive/archive.html")}?embed=1`;
+  const submitUrl = `${api.runtime.getURL("archive/submit.html")}?embed=1`;
 
   const host = document.createElement("div");
   host.id = ROOT_ID;
@@ -94,8 +94,8 @@
       }
     </style>
     <div class="backdrop" aria-hidden="true"></div>
-    <div class="panel" role="dialog" aria-label="savault">
-      <iframe src="${archiveUrl}" title="savault"></iframe>
+    <div class="panel" role="dialog" aria-label="Submit a find - savault">
+      <iframe src="${submitUrl}" title="Submit a find to savault"></iframe>
     </div>
   `;
 
@@ -136,6 +136,13 @@
     if (event.source !== iframe?.contentWindow) return;
     if (event.data?.type === "savault-archive-close") {
       closeOverlay();
+    }
+    if (event.data?.type === "savault-open-archive") {
+      closeOverlay();
+      // Inject archive overlay
+      const script = document.createElement("script");
+      script.src = api.runtime.getURL("content/overlay.js");
+      document.documentElement.appendChild(script);
     }
   }
 
