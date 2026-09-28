@@ -1,4 +1,8 @@
-import { queryArchive } from "../lib/notion.js";
+import {
+  queryArchive,
+  queryArchiveWithMeta,
+  refreshRemoteArchive,
+} from "../lib/notion.js";
 import { getSettings, isConfigured } from "../lib/storage.js";
 import {
   getExtensionSavedSlugs,
@@ -58,6 +62,7 @@ const categoryTileEls = [...document.querySelectorAll(".vault-tile")];
 const savedResultsEl = document.getElementById("saved-results");
 const heroTitleEl = document.querySelector(".hero-title");
 const heroSubtitleEl = document.querySelector(".hero-subtitle");
+const lastUpdatedMetaEl = document.getElementById("last-updated");
 
 document.getElementById("search-icon").innerHTML = iconifyIcon("magnifyingGlass", 16);
 document.getElementById("category-chevron").innerHTML = iconifyIcon("caretDown", 14);
@@ -198,6 +203,34 @@ function hideStatus() {
   statusEl.hidden = true;
   statusEl.textContent = "";
   statusEl.className = "status";
+}
+
+let lastUpdatedAt = "";
+
+function formatUpdatedAge(updatedAt) {
+  const ts = Date.parse(updatedAt);
+  if (Number.isNaN(ts)) return "";
+  const mins = Math.max(0, Math.round((Date.now() - ts) / 60000));
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function updateLastUpdated(ageOverride) {
+  if (!lastUpdatedMetaEl) return;
+  const age = ageOverride ?? formatUpdatedAge(lastUpdatedAt);
+  if (!age) {
+    lastUpdatedMetaEl.textContent = "";
+    lastUpdatedMetaEl.hidden = true;
+    lastUpdatedMetaEl.classList.remove("is-stale");
+    return;
+  }
+  lastUpdatedMetaEl.textContent = `Updated ${age}`;
+  lastUpdatedMetaEl.hidden = false;
+  lastUpdatedMetaEl.classList.toggle("is-stale", /d ago|d$/.test(age));
 }
 
 function escapeHtml(value) {
@@ -878,7 +911,7 @@ function crossfadeHero(title, subtitle, callback) {
   }, 130);
 }
 
-async function loadArchive() {
+async function loadArchive({ force = false } = {}) {
   if (!isConfigured()) {
     showStatus(
       "API not configured. Set SAVAULT_API_BASE in lib/api-config.js.",
@@ -902,6 +935,8 @@ async function loadArchive() {
   if (cached) {
     allItems = cached.items;
     archiveLoaded = true;
+    lastUpdatedAt = cached.updatedAt || "";
+    updateLastUpdated();
     updateVaultCTAs();
     activePricing = "All";
     renderCategoryFilter(allItems);
@@ -909,23 +944,30 @@ async function loadArchive() {
     updateCategoryTiles();
     renderItems(filterItems());
 
-    if (cached.fresh) return;
+    if (cached.fresh && !force) return;
 
     refreshBtn.disabled = true;
     refreshBtn.classList.add("is-spinning");
 
     try {
       const settings = await getSettings();
-      const freshItems = await queryArchive(settings);
+      const { items: freshItems, updatedAt } = await queryArchiveWithMeta(settings);
       allItems = freshItems;
-      await setCachedArchive(freshItems);
+      lastUpdatedAt = updatedAt;
+      await setCachedArchive(freshItems, updatedAt);
+      updateLastUpdated();
       activePricing = "All";
       renderCategoryFilter(allItems);
       renderPricingFilter(allItems);
       updateCategoryTiles();
       renderItems(filterItems());
-    } catch {
+      hideStatus();
+    } catch (err) {
       /* keep stale cache */
+      showStatus(
+        `Couldn't check for updates (${err?.message || "network error"}). Showing saved data.`,
+        "error"
+      );
     } finally {
       refreshBtn.disabled = false;
       refreshBtn.classList.remove("is-spinning");
@@ -939,10 +981,12 @@ async function loadArchive() {
 
   try {
     const settings = await getSettings();
-    const items = await queryArchive(settings);
+    const { items, updatedAt } = await queryArchiveWithMeta(settings);
     allItems = items;
     archiveLoaded = true;
-    await setCachedArchive(items);
+    lastUpdatedAt = updatedAt;
+    await setCachedArchive(items, updatedAt);
+    updateLastUpdated();
     updateVaultCTAs();
     hideStatus();
     activePricing = "All";
@@ -995,7 +1039,35 @@ clearCategoryBtn?.addEventListener("click", () => {
 categoryTileEls.forEach((tile) => {
   tile.addEventListener("click", () => setActiveCategory(tile.dataset.category));
 });
-refreshBtn.addEventListener("click", loadArchive);
+let isForceRefreshing = false;
+
+async function forceRefreshArchive() {
+  if (!isConfigured() || isForceRefreshing) return;
+
+  isForceRefreshing = true;
+  refreshBtn.disabled = true;
+  refreshBtn.classList.add("is-spinning");
+  if (lastUpdatedMetaEl) {
+    lastUpdatedMetaEl.textContent = "Syncing with Notion...";
+    lastUpdatedMetaEl.hidden = false;
+    lastUpdatedMetaEl.classList.remove("is-stale");
+  }
+
+  try {
+    const settings = await getSettings();
+    await refreshRemoteArchive(settings);
+    await loadArchive({ force: true });
+  } catch (err) {
+    showStatus(err?.message || "Sync failed.", "error");
+    updateLastUpdated();
+  } finally {
+    isForceRefreshing = false;
+    refreshBtn.disabled = false;
+    refreshBtn.classList.remove("is-spinning");
+  }
+}
+
+refreshBtn.addEventListener("click", forceRefreshArchive);
 
 renderCategoryFilter(allItems);
 renderPricingFilter(allItems);

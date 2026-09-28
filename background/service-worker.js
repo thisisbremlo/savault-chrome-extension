@@ -1,7 +1,10 @@
+import { SAVAULT_API_BASE as ARCHIVE_API_BASE } from "../lib/api-config.js";
+
 const api = globalThis.browser ?? globalThis.chrome;
 
 const CACHE_KEY = "savault_archive_cache";
 const CACHE_TS_KEY = "savault_archive_cache_ts";
+const CACHE_UPDATED_AT_KEY = "savault_archive_updated_at";
 const CACHE_MAX_AGE = 10 * 60 * 1000;
 
 function storageGet(keys) {
@@ -19,7 +22,7 @@ async function prefetchArchive() {
     if (Date.now() - ts < CACHE_MAX_AGE) return;
 
     const resp = await fetch(
-      "https://loopa-archive-api.bennimkbremer.workers.dev/api/archive",
+      `${ARCHIVE_API_BASE.replace(/\/$/, "")}/api/archive`,
       { headers: { Accept: "application/json" } }
     );
     if (!resp.ok) return;
@@ -30,6 +33,7 @@ async function prefetchArchive() {
     await storageSet({
       [CACHE_KEY]: items,
       [CACHE_TS_KEY]: Date.now(),
+      [CACHE_UPDATED_AT_KEY]: data.updatedAt || "",
     });
   } catch {
     /* best-effort prefetch */

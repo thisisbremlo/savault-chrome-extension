@@ -7,6 +7,22 @@ compatibility_date = "2024-12-01"
 #   NOTION_DATABASE_ID
 # Optional:
 #   SAVAULT_API_KEY - if set, extension must send X-Savault-Key header
+#   SAVAULT_ALLOWED_ORIGINS - comma-separated extra origins allowed by CORS
+#   SAVAULT_REFERRAL_SOURCE - rewrites item URLs with utm_source=<value>
+#   SAVAULT_ASSET_REPO - rewrites cdn.jsdelivr.net/gh/thisisbremlo/loopa-assets@main to this repo
+# Bindings:
+#   SAVAULT_KV - KV namespace holding the pre-serialized archive snapshot
+#   COUNTS_LIMITER - optional rate limiter binding for /api/counts
+
+[triggers]
+crons = ["0 3 * * *"]
+
+# Create with:
+#   npx wrangler kv namespace create SAVAULT_KV
+# then put its id below.
+[[kv_namespaces]]
+binding = "SAVAULT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
 
 [observability]
 enabled = true

@@ -6,6 +6,7 @@
   "permissions": ["storage", "scripting", "activeTab"],
   "host_permissions": [
     "https://savault.framer.website/*",
+    "https://archive-api.savault.de/*",
     "https://*.workers.dev/*",
     "http://127.0.0.1:8787/*",
     "http://localhost:8787/*"

@@ -732,15 +732,26 @@ html.embed .app {
 
 .filter-checkbox-icon .filter-checkbox-btn {
   color: #d1d1d1;
-}
-
-.vault-browse {
+}.vault-browse {
   position: relative;
   z-index: 2;
   padding: 0 var(--page-x) 0;
   opacity: 1;
   transition: opacity 0.2s ease;
 }
+
+.last-updated {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: left;
+}
+
+.last-updated.is-stale {
+  color: #d9a441;
+}
+
 
 .app:not(.has-results):not(.has-personal-vault):not(.has-saved-empty) .vault-browse {
   position: absolute;

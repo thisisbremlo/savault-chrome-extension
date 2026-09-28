@@ -101,6 +101,17 @@ Required Worker secrets:
 Optional:
 
 - `SAVAULT_API_KEY`
+- `SAVAULT_ALLOWED_ORIGINS` — comma-separated extra CORS origins
+- `SAVAULT_REFERRAL_SOURCE` — adds `utm_source` to item URLs
+- `SAVAULT_ASSET_REPO` — rewrites jsDelivr asset URLs to your assets repo
+
+Required bindings:
+
+- `SAVAULT_KV` — KV namespace caching the pre-serialized archive snapshot (`wrangler.toml` expects its id)
+
+### How freshness works
+
+The Worker does not query Notion on every request. `/api/archive` serves a pre-serialized snapshot from KV, rebuilt by a daily cron trigger (03:00 UTC) or an explicit `POST/GET /api/refresh`. The extension's refresh button calls `/api/refresh` and then reloads, so new Notion entries appear immediately without waiting for the cron. The overlay also shows when the archive was last updated and flags snapshots older than 24 hours.
 
 ## Packaging
 
